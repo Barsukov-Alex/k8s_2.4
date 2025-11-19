@@ -197,7 +197,7 @@ barsukov@barsukov:~/k8s_2.4$
 Создаем неймспейсы
 
 <img src = "img/3.jpg" width = 100%>
-<img src = "img/4jpg" width = 100%>
+<img src = "img/4.jpg" width = 100%>
 
 ## УСТАНОВКА ПЕРВОЙ ВЕРСИИ (app1-v1)
 
