@@ -1,0 +1,24 @@
+global:
+  namespace: app2
+  environment: production
+
+web:
+  enabled: true
+  name: "web-app"
+  replicaCount: 1
+  image:
+    repository: "nginx"
+    tag: "1.24"
+  env:
+    APP_VERSION: "1.0-stable"
+
+api:
+  enabled: true
+  name: "api-app"
+  replicaCount: 1
+  image:
+    repository: "nginx"
+    tag: "1.24"
+  env:
+    APP_VERSION: "1.0-stable"
+    API_ENV: "production"

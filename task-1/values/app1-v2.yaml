@@ -1,0 +1,24 @@
+global:
+  namespace: app1
+  environment: staging
+
+web:
+  enabled: true
+  name: "web-app-v2"
+  replicaCount: 3
+  image:
+    repository: "nginx"
+    tag: "1.26"
+  env:
+    APP_VERSION: "2.0"
+
+api:
+  enabled: true
+  name: "api-app-v2"
+  replicaCount: 2
+  image:
+    repository: "nginx"
+    tag: "1.26"
+  env:
+    APP_VERSION: "2.0"
+    API_ENV: "staging-v2"
