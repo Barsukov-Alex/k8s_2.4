@@ -1,0 +1,21 @@
+{{- if .Values.web.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.web.name }}-service
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: {{ .Values.web.name }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.web.service.port }}
+      targetPort: {{ .Values.web.service.targetPort }}
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ .Values.web.name }}
+{{- end }}

@@ -27,6 +27,164 @@
 2. Каждый компонент приложения деплоится отдельным deployment’ом или statefulset’ом.
 3. В переменных чарта измените образ приложения для изменения версии.
 
+### Ответ
+
+<img src = "img/1.jpg" width = 100%>
+
+```
+barsukov@barsukov:~/k8s_2.4$ helm template test task1 --debug
+level=DEBUG msg="Original chart version" version=""
+level=DEBUG msg="Chart path" path=/home/barsukov/k8s_2.4/task1
+level=DEBUG msg="number of dependencies in the chart" dependencies=0
+---
+# Source: myapp/templates/api/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-app-service
+  namespace: default
+  labels:
+    app: api-app
+    chart: "myapp-0.1.0"
+    release: test
+    heritage: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+  selector:
+    app: api-app
+---
+# Source: myapp/templates/web/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-app-service
+  namespace: default
+  labels:
+    app: web-app
+    chart: "myapp-0.1.0"
+    release: test
+    heritage: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+  selector:
+    app: web-app
+---
+# Source: myapp/templates/api/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-app
+  namespace: default
+  labels:
+    app: api-app
+    chart: "myapp-0.1.0"
+    release: test
+    heritage: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-app
+  template:
+    metadata:
+      labels:
+        app: api-app
+        version: "1.25"
+    spec:
+      containers:
+        - name: api
+          image: "nginx:1.25"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          env:
+            - name: APP_VERSION
+              value: "1.0"
+            - name: API_ENV
+              value: "production"
+            - name: NAMESPACE
+              value: "default"
+            - name: ENVIRONMENT
+              value: "production"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+---
+# Source: myapp/templates/web/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+  namespace: default
+  labels:
+    app: web-app
+    chart: "myapp-0.1.0"
+    release: test
+    heritage: Helm
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web-app
+  template:
+    metadata:
+      labels:
+        app: web-app
+        version: "1.25"
+    spec:
+      containers:
+        - name: web
+          image: "nginx:1.25"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          env:
+            - name: APP_VERSION
+              value: "1.0"
+            - name: NAMESPACE
+              value: "default"
+            - name: ENVIRONMENT
+              value: "production"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+barsukov@barsukov:~/k8s_2.4$ 
+```
+
+<img src = "img/2.jpg" width = 100%>
+
 ------
 ### Задание 2. Запустить две версии в разных неймспейсах
 
